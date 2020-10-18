@@ -1,4 +1,3 @@
-const { render } = require("ejs");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -91,11 +90,45 @@ app.post("/blogs", (req, res) => {
 app.get("/blogs/create", (req, res) => {
   res.render("create", { title: "CREATE" });
 });
+
 app.get("/blogs/:id", (req, res) => {
   const id = req.params.id;
   Blog.findById(id)
     .then((data) => {
       res.render("details", { blog: data, title: "blog Details" });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.delete("/blogs/:id", (req, res) => {
+  const id = req.params.id;
+  Blog.findByIdAndDelete(id)
+    .then((data) => {
+      res.json({ redirect: "/blogs" });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.get("/blogs/edit/:id", (req, res) => {
+  const id = req.params.id;
+  Blog.findById(id)
+    .then((data) => {
+      res.render("editBlog", { blogDATA: data, title: "edit" });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.put("/blogs/edit/:id", (req, res) => {
+  const id = req.params.id;
+  Blog.findByIdAndUpdate(id)
+    .then((data) => {
+      res.render("editBlog", { blogDATA: data, title: "edit", updated: true });
     })
     .catch((err) => {
       console.log(err);
